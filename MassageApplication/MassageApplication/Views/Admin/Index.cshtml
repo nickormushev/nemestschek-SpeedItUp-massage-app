@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<body style="background: url('Content/img/admin-bg.jpeg') no-repeat center center fixed;  background-size: cover;">
+    @Html.Partial("_Navigation")
+
+    <div class="alert alert-success" style="display:none; z-index:10000">
+        Successfully updated! <br />I am proud of you! :) <br><br><br><br><br><br>
+    </div>
+
+    
+        <div class="alert alert-danger" style="display:none; z-index:10000">
+            Update failed.
+            <br>
+        </div>
+
+        @{
+            if ((int)ViewData["booked"] == 1)
+            {
+                <text>
+                    <script>
+                        $(document).ready(function () {
+                            $.blockUI({
+                                message: $('div.alert-success'),
+                                fadeIn: 700,
+                                fadeOut: 700,
+                                timeout: 4000,
+                                showOverlay: false,
+                                centerY: false,
+                                css: {
+                                    top: '60px',
+                                    left: '',
+                                    right: '10px'
+                                }
+                            });
+                        });
+                    </script>
+                </text>
+            }
+            else if ((int)ViewData["booked"] == 0)
+            {
+                <text>
+                    <script>
+                        $(document).ready(function () {
+                            $.blockUI({
+                                message: $('div.alert-danger'),
+                                fadeIn: 700,
+                                fadeOut: 700,
+                                timeout: 5500,
+                                showOverlay: false,
+                                centerY: false,
+                                css: {
+                                    top: '70px',
+                                    left: '',
+                                    right: '10px',
+                                }
+                            });
+                        });
+                    </script>
+                </text>
+            }
+        }
+        <div class="divHeader">
+            @*<div class="jumbotron">
+                     <p>Admin Panel</p>
+                </div>*@
+        </div>
+
+        <div class="buttons">
+
+            <div class="row justify-content-center">
+                <a class="linkButton" href="@Url.Action("Index", "CurrentSchedule")">Current Schedule</a>
+            </div>
+
+            <div class="row justify-content-center">
+                <a class="linkButton" href="http://university2019/ReportServer/Pages/ReportViewer.aspx?%2fDailyReport&rs:Command=Render">Daily Statistics</a>
+            </div>
+
+
+            <div class="row justify-content-center">
+                <a class="linkButton" href="http://university2019/ReportServer/Pages/ReportViewer.aspx?%2fMonthlyReport&rs:Command=Render">Monthly Statistics</a>
+            </div>
+
+
+            <div class="row justify-content-center">
+                <a class="linkButton" href="@Url.Action("Index", "EditSchedule")">Manage Masseuses</a>
+            </div>
+
+
+            <div class="row justify-content-center">
+                @using (Html.BeginForm("updateDates", "Admin", FormMethod.Post, new { @style = "width:100%; " }))
+            {
+                    <input type="submit" class="linkButton" style="height:70%;" value="Update Week" />
+                }
+            </div>
+        </div>
+</body>

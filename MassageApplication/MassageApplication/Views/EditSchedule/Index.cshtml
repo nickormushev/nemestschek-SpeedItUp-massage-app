@@ -1,0 +1,42 @@
+﻿@using MassageApplication.Database;
+
+@{
+
+    ViewBag.Title = "Edit Schedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+    //Dictionary<int, IEnumerable<Massage_Slots>> dict = ViewData["dict"] as Dictionary<int, IEnumerable<Massage_Slots>>;
+    IEnumerable<Massage_Days> days = ViewData["days"] as IEnumerable<Massage_Days>;
+}
+
+@Html.Partial("_Navigation")
+
+<div class="justify-content-center" style="margin-top:10%; text-align:center; ">
+    <h2 style="margin-bottom:20px">Manage Masseuses</h2>
+    
+    @using (Html.BeginForm("UpdateMasseuse", "EditSchedule", FormMethod.Post, new { @style = "display: block" }))
+    {
+    <div class="justify-content-center" style="padding:5px; ">
+        <label style="font-size:20px; padding-right:5px;"> Select day of the current week:</label>
+        <select style="width:15%; height:33px" name="dayId">
+            @foreach (var day in days)
+            {
+                if (day.date.Date >= DateTime.Now.Date.Date)
+                {
+                    <option value="@day.id">@day.date.DayOfWeek</option>
+                }
+            }
+        </select>
+    </div>
+    
+
+    <div class="justify-content-center" style="padding:5px">
+        <label style="font-size:20px;  padding-right:5px; ">   Masseuse's name:</label>
+        <input style="width:20%; height:33px" type="text" placeholder="Name" name="newMasseuseName" />
+    </div>
+
+
+    <input type="submit" class="btn btn-lg font-weight-bold bookBtn" style="background-color:#96df90;color:black; font-weight:bold; height:70%; margin-top:2%;" value="Save name" />
+    }
+</div>

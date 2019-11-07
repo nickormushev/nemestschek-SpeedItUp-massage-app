@@ -1,0 +1,370 @@
+﻿@using MassageApplication.Database
+@model MassageApplication.Models.BookingModel
+
+@{
+    IEnumerable<Employee> employee = ViewData["emp"] as IEnumerable<Employee>;
+    Dictionary<int, IEnumerable<Massage_Slots>> dict = ViewData["dict"] as Dictionary<int, IEnumerable<Massage_Slots>>;
+    IEnumerable<Massage_Days> days = ViewData["days"] as IEnumerable<Massage_Days>;
+    ViewBag.Title = "Massage App";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_HomeNavigation")
+
+@* successfull book message *@
+<div class="alert alert-success" style="display:none">
+    Successfully booked :)
+</div>
+
+@* fail book message *@
+<div class="alert alert-danger" style="display:none">
+        <ul>
+@if (!ViewData.ModelState.IsValidField("employee_id"))
+{
+    <li>@Html.ValidationMessageFor(model => model.employee_id, "The Name field is invalid", new { }) </li>
+}
+@if (!ViewData.ModelState.IsValidField("phone"))
+{
+    <li>@Html.ValidationMessageFor(model => model.phone, "", new { }) </li>
+}
+@if (!ViewData.ModelState.IsValidField("massage_slot_id"))
+{
+    <li> @Html.ValidationMessageFor(model => model.massage_slot_id, "", new { }) </li>
+}
+            <li>A massage slot must be selected</li>
+            <li>You have booked two massages already</li>
+            <li>You have attempted to book a second massage before 10:00 on the date </li>
+
+
+
+
+</ul>
+</div>
+
+@{
+    if ((int)ViewData["booked"] == 1)
+    {
+        <text>
+            <script>
+                $(document).ready(function() { 
+                        $.blockUI({ 
+                            message: $('div.alert-success'), 
+                            fadeIn: 700, 
+                            fadeOut: 700, 
+                            timeout: 10000, 
+                            showOverlay: false, 
+                            centerY: false, 
+                            css: { 
+                                top: '80px', 
+                                left: '', 
+                                right: '10px'
+                            } 
+                        }); 
+                    });  
+            </script>
+        </text>
+    }
+    else if((int)ViewData["booked"] == 0)
+    {
+        <text>
+            <script>
+                $(document).ready(function() {
+                        $.blockUI({
+                            message: $('div.alert-danger'),
+                            fadeIn: 700,
+                            fadeOut: 700,
+                            timeout: 5500,
+                            showOverlay: false,
+                            centerY: false,
+                            css: {
+                                top: '80px',
+                                left: '',
+                                right: '10px',
+                            }
+                        });
+                    });
+            </script>
+        </text>
+    }
+}
+
+<div class="container" style="margin-top:8%;" id="intro">
+    <div class="row">
+        <div class="col">
+            <img class="rounded-circle" id="pic1" src="~/Content/img/roundPic1.png">
+        </div>
+        <div class="col-7" id="headers">
+            <h2 style="height:40;padding-top:7px;margin-top:0;margin-bottom:0;margin-right:auto;margin-left:auto;">Massage Center </h2>
+            <h4 class="info"><br> You can book a massage from 10:00 to 17:00 every working day except for Tuesday. <br>The price for a single massage is 3.50 lv.</h4>
+        </div>
+        <div class="col">
+            <img class="rounded-circle" id="pic2" src="~/Content/img/roundPic2.png">
+        </div>
+    </div>
+</div>
+
+<div class="container" style="margin-top:15px;">
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @style = "display:block" }))
+    {
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="justify-content-center" style="display:flex; padding:5px;">
+            <label style="font-size:20px;">Name:</label>
+            <input id="name_input" placeholder="Name" list="employee_id" name="employee_id" autocomplete="off" />
+            <datalist id="employee_id">
+                @foreach (var emp in employee)
+                {
+                    <option data-value="@emp.id" value="@emp.name"></option>
+                }
+            </datalist>
+
+            @* phone *@
+            <div class="justify-content-center" style="display:flex">
+                <label style="font-size:20px;">Phone:</label>
+ 
+                @Html.TextBoxFor(m => m.phone, new {autocomplete="off", placeholder = "Phone" })
+            </div>
+        </div>
+
+            <div class="table-responsive">
+                <table id="dates" class="table tb">
+                    <thead>
+                        @foreach (var day in days)
+                        {
+                        <td>
+                            @if (day.date.DayOfWeek.ToString().Equals("Tuesday") || day.date.Date < DateTime.Now.Date.Date)
+                            {
+                                <label class="myBtn disButton day">
+                                    @Html.RadioButtonFor(m => m.selected_massage_day_id, day.id, new { @disabled = "disabled", @class = "radioBtn" })
+                                    @day.date.DayOfWeek
+                                </label>
+                            }
+                            else
+                            {
+                                <label class="myBtn day activeDay" id="@day.date.DayOfWeek.ToString().ToLower()">
+                                    @Html.RadioButtonFor(m => m.selected_massage_day_id, day.id, new { @disabled = "", @class = "radioBtn" })
+                                    @day.date.DayOfWeek
+                                </label>
+
+                            }
+                        </td>
+                        }
+                        </thead>
+                        <tbody>
+                            <tr>
+                                @foreach (var day in days)
+                                {
+                                    <td>
+                                        @if (day.date.DayOfWeek.ToString().Equals("Tuesday") || day.date.Date < DateTime.Now.Date.Date)
+                                        {
+                                            <label style="color:#4d4a48">
+                                                @day.date.ToShortDateString()
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label>
+                                                @day.date.ToShortDateString()
+                                            </label>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+
+
+                            <tr>
+                                @foreach (var day in days)
+                                {
+                                    <td>
+                                        @if (!day.date.DayOfWeek.ToString().Equals("Tuesday"))
+                                        {
+                                            if (day.date.Date < DateTime.Now.Date.Date)
+                                            {
+                                                <label style="color:#4d4a48">
+                                                    @day.masseuse
+                                                </label>
+                                            }
+                                            else
+                                            {
+                                                <label>@day.masseuse</label>
+                                            }
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                @* Hours table start *@
+
+    string[,] hours = {  { "10:00", "10:20", "10:40" },
+                { "11:00", "11:20", "11:40" },
+                { "12:00", "12:20", "12:40" },
+                { "13:00", "13:20", "13:40" },
+                { "14:00", "14:20", "14:40" },
+                { "15:00", "15:20", "15:40" },
+                { "16:00", "16:20", "16:40" } };
+
+    <table class="table tb" style="margin-bottom:10px; width:63%;">
+        @for (int i = 0; i < 7; i++)
+        {
+            <tr id="timeHead">
+                @for (int j = 0; j < 3; j++)
+                    {
+                    <td>
+                        <label class="myBtn time disButton" style="font-weight:600; font-size:18px;">
+                            @* @Html.RadioButtonFor(m => m.massage_slot_id, day.id, new { @disabled = "disabled", @class = "radioBtn" })*@
+                            <input type="radio" name="massage_slot_id" value="" disabled class="radioBtn" /> @hours[i, j]
+                        </label>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+
+
+        <div class="row justify-content-center">
+            <button id="submit" type="submit" class="btn btn-lg font-weight-bold bookBtn" style="background-color:#96df90; margin-top:15px ;color:black; font-weight:bold">Book</button>
+        </div>
+    }
+
+</div>
+
+
+<div class="row justify-content-center" style=" margin-top:15px;">
+    If you have questions:&nbsp;     
+    <a href="https://intra.nemetschek.bg/display/~Natali%20Ilieva"> Natali's Intra profile</a>
+</div>
+
+
+<script>
+    var data = {};
+    $("#employee_id>option").each(function (i, el) {
+        data[$(el).data("value")] = $(el).val();
+    });
+
+    $('#submit').click(function () {
+        let value = $('#name_input').val();
+        let matched = false;
+        $.each(data, function(id, name){
+            if(name == value){
+                $("#name_input").val(id);
+                matched = true;
+            }
+        })
+        if(!matched){
+            $("#name_input").val(null);
+        }
+    });
+</script>
+
+
+<script>
+    class TimeSlot{
+        constructor(id, time){
+            this.id = id;
+            this.time=time;
+        }
+    }
+    // array of array containing TimeSlot
+    let days = [];
+
+    @for (int i = 0; i < days.Count(); i++) {
+        int dayId = days.ElementAt(i).id;
+        int availableHoursCount = dict[dayId].Count();
+        <text>
+    days.push(new Array());
+    </text>
+        for (int j = 0; j < availableHoursCount; j++) {
+            <text>
+    days[@i][@j] = new TimeSlot(@Html.Raw(Json.Encode(dict[dayId].ElementAt(j).id)), @Html.Raw(Json.Encode(dict[dayId].ElementAt(j).start_hour.ToShortTimeString())))
+    </text>
+        }
+    }
+
+    //variable containing all days from Mondey to Friday
+    let daysOfWeek = $(".day");
+    //variable containing all time slots
+    let timeTable = $(".time");
+    //variable containing only days of week that can be choosen
+    let activeDaysOfWeek = $(".activeDay")
+   
+
+    activeDaysOfWeek.click(function() {
+        let activeDayIndex = activeDaysOfWeek.index(this);
+        //index of selected day
+        let index = daysOfWeek.index(this);
+        //enableing and disableing days of week buttons
+        $.each(activeDaysOfWeek, function(){
+            $(this).removeClass("makeRed")
+        })
+        $(this).addClass("makeRed");
+        let currTime = new Date($.now());
+        console.log(currTime.getMinutes());
+        for(let i = 0; i < timeTable.length; i++){
+            let tableSlotTime = $.trim(timeTable.eq(i).text().replace(/[\t\n]+/g, ' '));
+            let avl = false;
+            $.each(days[index], function(){
+                let avlSlot = $(this)
+                console.log(avlSlot[0].time);
+                if (tableSlotTime == avlSlot[0].time ){
+                    avl = true;
+                    timeTable.eq(i).removeClass("disButton");
+                    timeTable.eq(i).children().attr("disabled", false);
+                    timeTable.eq(i).children().val(avlSlot[0].id);
+                    // class used to find only available slots
+                    timeTable.eq(i).addClass("avlTime");
+                    // breaks foreach
+                    return false;
+                } 
+            })
+
+            //renders time in compare friendly format
+            let formattedCurrTime = "";
+            if(currTime.getHours().length == 1){
+                formattedCurrTime = ("0" + currTime.getHours() + ":" + currTime.getMinutes())
+            } else {
+                formattedCurrTime = (currTime.getHours() + ":" + currTime.getMinutes())
+            } 
+
+            if(currTime.getMinutes().length == 1) {
+                formattedCurrTime = (currTime.getHours() + ":0" + currTime.getMinutes())
+            } else {
+                formattedCurrTime = (currTime.getHours() + ":" + currTime.getMinutes())
+            }
+
+            // make not available
+            if(!avl || (formattedCurrTime > tableSlotTime && activeDayIndex == 0)){
+                timeTable.eq(i).children().attr("disabled", true);
+                timeTable.eq(i).addClass("disButton");
+                timeTable.eq(i).children().val("");
+                // class used to find only available slots
+                timeTable.eq(i).removeClass("avlTime");
+            }
+        }
+        //load click events only for the available hours
+        timeSlotsClicks($(".avlTime"));
+    });
+
+
+    function timeSlotsClicks(avaiableSlots){
+        //remove click event and selected class of all elements
+        $.each(timeTable, function(){
+            //visual deselect
+            $(this).removeClass("makeRed")
+            $(this).off("click");
+        })
+
+        //add click event that adds a clocked class
+        avaiableSlots.click(function() {
+            //visual deselect
+            $.each(timeTable, function(){
+                $(this).removeClass("makeRed")
+            })
+            $(this).addClass("makeRed");
+        })
+    }
+
+</script>

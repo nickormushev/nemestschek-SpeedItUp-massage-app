@@ -1,0 +1,66 @@
+﻿.nav-link{
+    font-size: 19px;
+}
+
+
+.buttons{
+    width:20%;
+    margin:auto;
+    text-align:center;
+    display:block;
+    padding:3px;
+    text-decoration:none;
+}
+
+.linkButton {
+    width:100%;
+    margin:10px;
+    background: #ffdd99;
+    padding: 8px;
+    text-decoration:none;
+    cursor:pointer;
+    color: #6b2900;
+    font-size:22px;
+    border-radius:10px;
+    border:2px solid #cc5200;
+}
+
+
+
+.linkButton:hover{
+  background:#96df90;
+   text-decoration:none;
+   color: #6b2900;
+}
+
+p{
+    margin: 0 auto;
+    color: #6b2900;
+}
+
+.divHeader .jumbotron {
+  padding:5px;
+  background-size:cover;
+  background-repeat:no-repeat;
+  margin-left: auto;
+  margin-right: auto;
+  background-color:rgba(209, 207, 203, 0.76);
+  font-size: 22px;
+  font-weight:700;
+  text-align: center;
+}
+
+.divHeader {
+  margin-top:60px;
+  /*background-image: url(https://healthyskindayspa.com/wp-content/uploads/2016/12/cropped-Header-Flowers-3.jpg);
+  background-size:cover;*/
+  padding:40px;
+  width:65%;
+  height: 120px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0;
+}
+
+
+

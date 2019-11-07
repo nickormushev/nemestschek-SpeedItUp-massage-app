@@ -1,0 +1,142 @@
+﻿@model IEnumerable<MassageApplication.Models.MassageInfoModel>
+@{
+    ViewBag.Title = "Current Schedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.Partial("_Navigation")
+
+
+<div style="margin-top:10%;">
+    <h2>Booked massages - @DateTime.Now.ToString("dd.MM.yyyy")</h2>
+</div>
+
+
+
+<table class="table tb" style="margin-bottom:10px; width:100%; border: 2px solid  #ffc247">
+    <thead>
+        <tr style="background:#fceac7; border-bottom: 2px solid #ffc247">
+            <th scope="col">Start hour</th>
+            <th scope="col">Employee</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        @foreach (var m in Model)
+        {
+
+            <tr style="font-weight:unset; border-bottom: 1px dotted  #ffc247;font-size:18px">
+                <td style="padding: 3px; vertical-align: middle; width:15%;">
+                    @m.startHour.ToShortTimeString()
+                </td>
+                <td style="padding: 3px; vertical-align: middle;">
+                    @m.name
+                </td>
+                <td style="padding: 3px; vertical-align: middle; width:20%;">
+                    @m.phone
+                </td>
+                @* attended == false => attend can be clicked, unattend can not be clicked *@ 
+                @if (m.hasAttended == false)
+                {
+                    <td style="padding: 3px; vertical-align: middle;" id="@m.bookId">
+                        <label class="attendedBtn clickableAttendButton">
+                            <input type="radio" name="@m.bookId" class="radioBtn" />
+                            Attended
+                        </label>
+                        <label class="attendedBtn makeRedBorder">
+                            <input type="radio" name="@m.bookId" class="radioBtn" />
+                            Unattended
+                        </label>
+                    </td>
+                }
+                @* attended == true => attend can not be clicked, unattend can be clicked *@
+                else
+                {
+                    <td style="padding: 3px; vertical-align: middle;" id="@m.bookId">
+                        <label class="attendedBtn makeRedBorder">
+                            <input type="radio" name="@m.bookId" class="radioBtn" />
+                            Attended
+                        </label>
+                        <label class="attendedBtn clickableUnattendButton">
+                            <input type="radio" name="@m.bookId" class="radioBtn" />
+                            Unattended
+                        </label>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    attendButtonsAsignClick($(".clickableAttendButton"));
+    unAttendButtonsAsignClick($(".clickableUnattendButton"));
+
+    function attendButtonsAsignClick(buttons) {
+        buttons.click(function () {
+            let bookId = $(this).children().attr('name');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("changeStatusToAttended")',
+                data: {
+                    "bookId": bookId
+                },
+                success: function () {
+                    //attend button
+                    $('#' + bookId).children("label").eq(0)
+                        .addClass('makeRedBorder')
+                        .removeClass("clickableAttendButton")
+                    //unattend button
+                    $('#' + bookId).children("label").eq(1)
+                        .removeClass('makeRedBorder')
+                        .addClass("clickableUnattendButton");
+
+                    $.each($(".attendedBtn"), function () {
+                        $(this).off("click");
+                    })
+                    attendButtonsAsignClick($(".clickableAttendButton"));
+                    unAttendButtonsAsignClick($(".clickableUnattendButton"));
+                },
+                error: function () {
+                    alert("error");
+                }
+            })
+        })
+    }
+
+    function unAttendButtonsAsignClick(buttons) {
+        buttons.click(function () {
+            let bookId = $(this).children().attr('name');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("changeStatusToUnAttended")',
+                data: {
+                    "bookId": bookId
+                },
+                success: function () {
+                    //attend button
+                    $('#' + bookId).children("label").eq(0)
+                        .removeClass('makeRedBorder')
+                        .addClass("clickableAttendButton");
+
+                    //unattend button
+                    $('#' + bookId).children("label").eq(1)
+                        .addClass('makeRedBorder')
+                        .removeClass("clickableUnattendButton")
+
+
+                    $.each($(".attendedBtn"), function () {
+                        $(this).off("click");
+                    })
+                    attendButtonsAsignClick($(".clickableAttendButton"));
+                    unAttendButtonsAsignClick($(".clickableUnattendButton"));
+
+                },
+                error: function () {
+                    alert("error");
+                }
+            })
+        })
+    }
+</script>

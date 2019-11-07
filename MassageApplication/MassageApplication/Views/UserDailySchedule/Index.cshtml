@@ -1,0 +1,50 @@
+﻿@model IEnumerable<MassageApplication.Models.MassageInfoModel>
+@{
+    ViewBag.Title = "User Daily Schedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@Html.Partial("_HomeNavigation")
+
+
+<div style="margin-top:15%">
+    <h2>Booked massages - @DateTime.Now.ToString("dd.MM.yyyy")</h2>
+</div>
+
+
+<table class="table tb" style="margin-bottom:10px; width:100%; border: 2px solid  #ffc247">
+    <thead>
+        <tr style="background:#fceac7; border-bottom: 2px solid #ffc247">
+            <th scope="col">Start hour</th>
+            <th scope="col">Employee</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var m in Model)
+        {
+
+            <tr style="font-weight:unset; border-bottom: 1px dotted  #ffc247;font-size:18px">
+                <td style="padding: 3px; vertical-align: middle; width:15%;">
+                    @m.startHour.ToShortTimeString()
+                </td>
+                <td style="padding: 3px; vertical-align: middle;">
+                    @m.name
+                </td>
+                <td style="padding: 3px; vertical-align: middle; width:20%;">
+                    @m.phone
+                </td>
+               
+                    <td style="padding: 8px; vertical-align: middle; width:20%; margin:2px;" id="@m.bookId">
+
+
+                        <a class="attendedBtn" style="width:40%!important; text-decoration:none; " href="@Url.Action("deleteBooking", "UserDailySchedule", new { bookId = @m.bookId })"> Cancel </a>
+
+                    </td>
+                
+            </tr>
+        }
+    </tbody>
+</table>

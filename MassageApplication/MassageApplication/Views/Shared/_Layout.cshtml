@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/customDate.css" rel="stylesheet" />
+    <link href="~/Content/AdminPage.css" rel="stylesheet" />
+    <link href="~/Content/HomePage.css" rel="stylesheet" >
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="~/Scripts/jquery.blockUI.js"></script>
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <style>
+        .nav-item a:hover {
+            color: white !important;
+            cursor: pointer;
+        }
+    </style>
+   
+</head>
+<body>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+   
+</body>
+</html>
